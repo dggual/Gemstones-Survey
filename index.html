@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Friendship Renewal: Find Your Stone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2EEF9; --card:#FFFFFF; --ink:#241B3A; --muted:#6A5F85; --line:#DDD4EE; --accent:#7A4BC2; --accent-ink:#FFFFFF;
+  --glow:rgba(122,75,194,.14);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#150F27;--card:#1F1738;--ink:#F1EBFF;--muted:#A99CCB;--line:#37295C;--accent:#B58AF0;--accent-ink:#150F27;--glow:rgba(181,138,240,.16);}
+}
+:root[data-theme="dark"]{--bg:#150F27;--card:#1F1738;--ink:#F1EBFF;--muted:#A99CCB;--line:#37295C;--accent:#B58AF0;--accent-ink:#150F27;--glow:rgba(181,138,240,.16);}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-size:17px;line-height:1.5;
+  background-image:radial-gradient(60rem 30rem at 50% -10rem,var(--glow),transparent)}
+main{max-width:34rem;margin:0 auto;padding:2.5rem 1.25rem 3rem}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,9vw,3.4rem);letter-spacing:-.01em}
+h2{font-size:clamp(1.7rem,6vw,2.2rem)}
+p{margin:.75rem 0}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1.5rem}
+label{display:block;font-weight:500;margin:1.5rem 0 .4rem}
+input[type=text]{width:100%;font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:.75rem;padding:.8rem 1rem}
+input[type=text]:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:.85rem 1.6rem;cursor:pointer;background:var(--accent);color:var(--accent-ink);margin-top:1.5rem}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.opts{display:grid;gap:.6rem;margin-top:1.25rem}
+.opt{font:inherit;text-align:left;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:.9rem;padding:.9rem 1rem;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--accent)}
+.opt.on{border-color:var(--accent);background:var(--glow)}
+.dots{display:flex;gap:.4rem;margin-bottom:1.25rem}
+.dots i{height:.5rem;flex:1;border-radius:99px;background:var(--line)}
+.dots i.done{background:var(--accent)}
+.back{background:none;border:0;color:var(--muted);font:inherit;cursor:pointer;padding:.5rem 0;margin-top:1rem}
+.result{text-align:center}
+.result svg{width:min(15rem,70%);height:auto;margin:.5rem auto}
+.bead{opacity:0;animation:pop .35s ease forwards}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.bead{animation:none;opacity:1}}
+.gems{list-style:none;padding:0;margin:1rem 0;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.gems li{display:flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:99px;padding:.35rem .9rem .35rem .5rem;font-weight:500;font-size:.95rem}
+.gems b{width:1rem;height:1rem;border-radius:50%;display:inline-block}
+.phrase{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.5rem;font-style:italic;margin:1rem 0 .25rem}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+  <section id="intro" class="card">
+    <h1>Find your stone</h1>
+    <p class="muted">Five quick questions for our friendship renewal. Go with your gut. The stones will know, and your answers choose the bracelet you take home.</p>
+    <label for="nm">Your name</label>
+    <input id="nm" type="text" maxlength="40" autocomplete="off" placeholder="So we can match your bracelet">
+    <button class="btn" id="go">Start</button>
+  </section>
+
+  <section id="quiz" class="card hidden" aria-live="polite">
+    <div class="dots" id="dots"></div>
+    <h2 id="qt"></h2>
+    <div class="opts" id="opts"></div>
+    <button class="back" id="back">Back</button>
+  </section>
+
+  <section id="res" class="card result hidden" aria-live="polite">
+    <p class="muted" id="who"></p>
+    <h2 id="rt"></h2>
+    <div id="art"></div>
+    <ul class="gems" id="gems"></ul>
+    <p id="rm"></p>
+    <p class="phrase" id="ph"></p>
+    <p class="muted">Renewed friendship, renewed energy ✨</p>
+    <p class="muted" style="font-size:.9rem">Show this screen at the souvenir table to get your bracelet.</p>
+    <button class="btn ghost" id="again">Start over</button>
+  </section>
+</main>
+
+<script>
+const G={cit:["Citrine","#E8B431"],ave:["Green Aventurine","#3E9B6B"],pyr:["Pyrite","#A8924F"],
+ tig:["Tiger’s Eye","#B8742A"],blk:["Black Onyx / Tourmaline","#3A3A48"],
+ ros:["Rose Quartz","#F0A9C0"],ame:["Amethyst","#8B5CC6"]};
+const Q=[
+ {q:"What are you hoping this new chapter brings?",a:{A:"Financial growth and abundance",B:"A big career breakthrough",C:"Deeper, warmer connections",D:"Peace of mind and calm"}},
+ {q:"Which sparkly thing calls to you?",a:{A:"A golden, glowing stone",B:"A deep, bold stone that looks powerful",C:"A soft pink stone",D:"A cool purple or blue stone"}},
+ {q:"Your ideal weekend looks like…",a:{A:"Planning side hustles or shopping smart",B:"Working on goals or learning a new skill",C:"Quality time with loved ones",D:"Sleeping in, a spa day, or doing nothing"}},
+ {q:"What drains you the most lately?",a:{A:"Bills and money worries",B:"Work pressure and uncertainty",C:"Heartaches or lonely moments",D:"Overthinking and burnout"}},
+ {q:"Which phrase would you put on your bracelet?",a:{A:"“Abundance flows to me.”",B:"“I am built for success.”",C:"“I am loved and I give love.”",D:"“I choose peace.”"}}
+];
+const R={
+ A:{n:"Money",g:["cit","ave","pyr"],m:"Abundance, luck, and prosperity.",p:"Abundance flows to me."},
+ B:{n:"Career",g:["tig","blk"],m:"Confidence, focus, and drive.",p:"I am built for success."},
+ C:{n:"Love",g:["ros"],m:"Self-love, harmony, and connection.",p:"I am loved and I give love."},
+ D:{n:"Stress",g:["ame"],m:"Calm, balance, and release.",p:"I choose peace."},
+ AB:{n:"Money & Career",g:["tig","cit"],m:"Success with steady income.",p:"I grow what I build."},
+ BC:{n:"Career & Love",g:["tig","ros"],m:"Passion at work and in the heart.",p:"I lead with heart."},
+ AC:{n:"Money & Love",g:["ave","ros"],m:"An abundant life and abundant relationships.",p:"I am rich in all the ways that matter."},
+ AD:{n:"Money & Stress",g:["cit","ame"],m:"Prosperity without the pressure.",p:"I prosper in peace."},
+ BD:{n:"Career & Stress",g:["blk","ame"],m:"A clear mind and calm focus.",p:"I work with a steady mind."},
+ CD:{n:"Love & Stress",g:["ros","ame"],m:"Gentle healing and peace.",p:"I rest in love."}
+};
+const $=id=>document.getElementById(id);
+let order=[],ans=[],i=0;
+
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function show(id){["intro","quiz","res"].forEach(s=>$(s).classList.toggle("hidden",s!==id));window.scrollTo(0,0)}
+
+function start(){
+  order=Q.map(q=>shuffle(Object.keys(q.a)));ans=[];i=0;show("quiz");draw();
+}
+function draw(){
+  const q=Q[i];
+  $("dots").innerHTML=Q.map((_,k)=>'<i class="'+(k<i?"done":"")+'"></i>').join("");
+  $("qt").textContent=q.q;
+  const box=$("opts");box.innerHTML="";
+  order[i].forEach(L=>{
+    const b=document.createElement("button");
+    b.className="opt"+(ans[i]===L?" on":"");b.textContent=q.a[L];
+    b.onclick=()=>{ans[i]=L;b.classList.add("on");setTimeout(next,220)};
+    box.appendChild(b);
+  });
+  $("back").style.visibility=i?"visible":"hidden";
+}
+function next(){ if(i<Q.length-1){i++;draw()}else finish() }
+
+function finish(){
+  const c={A:0,B:0,C:0,D:0};ans.forEach(L=>c[L]++);
+  const top=Math.max(...Object.values(c));
+  const key=Object.keys(c).filter(L=>c[L]===top).sort().join("");
+  const r=R[key]||R[key.slice(0,2)];
+  const name=$("nm").value.trim();
+  $("who").textContent=name?"For "+name:"";
+  $("rt").textContent=r.n+" bracelet";
+  $("rm").textContent=r.m;
+  $("ph").textContent="“"+r.p+"”";
+  $("gems").innerHTML="";
+  r.g.forEach(k=>{const li=document.createElement("li");const d=document.createElement("b");d.style.background=G[k][1];li.append(d,G[k][0]);$("gems").appendChild(li)});
+  bracelet(r.g);show("res");
+}
+function bracelet(keys){
+  const n=14,cx=110,cy=110,R0=78;let s='<svg viewBox="0 0 220 220" role="img" aria-label="Bracelet made of '+keys.map(k=>G[k][0]).join(", ")+'"><circle cx="110" cy="110" r="78" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2"/>';
+  for(let k=0;k<n;k++){
+    const a=k/n*Math.PI*2-Math.PI/2,x=cx+R0*Math.cos(a),y=cy+R0*Math.sin(a),col=G[keys[k%keys.length]][1];
+    s+='<g class="bead" style="animation-delay:'+(k*60)+'ms;transform-origin:'+x.toFixed(1)+'px '+y.toFixed(1)+'px"><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="15" fill="'+col+'"/><circle cx="'+(x-5).toFixed(1)+'" cy="'+(y-5).toFixed(1)+'" r="4.5" fill="#fff" fill-opacity=".55"/></g>';
+  }
+  $("art").innerHTML=s+"</svg>";
+}
+$("go").onclick=start;
+$("back").onclick=()=>{if(i>0){i--;draw()}};
+$("again").onclick=()=>{$("nm").value="";show("intro")};
+$("nm").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+</script>
+</body>
+</html>
