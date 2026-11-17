@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Friendship Renewal: Find Your Stone</title>
+<title>Friendship Renewal Check-in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -46,8 +46,10 @@ input[type=text]:focus-visible,button:focus-visible{outline:3px solid var(--acce
 @keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.bead{animation:none;opacity:1}}
 .gems{list-style:none;padding:0;margin:1rem 0;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
-.gems li{display:flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:99px;padding:.35rem .9rem .35rem .5rem;font-weight:500;font-size:.95rem}
-.gems b{width:1rem;height:1rem;border-radius:50%;display:inline-block}
+.gems li{display:flex;align-items:flex-start;gap:.75rem;border:1px solid var(--line);border-radius:1rem;padding:.8rem 1rem;text-align:left;font-size:.95rem;width:100%}
+.gems b{flex:none;width:1.1rem;height:1.1rem;border-radius:50%;margin-top:.2rem;display:inline-block}
+.gems strong{display:block;font-weight:600}
+.gems span{color:var(--muted)}
 .phrase{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.5rem;font-style:italic;margin:1rem 0 .25rem}
 .hidden{display:none}
 </style>
@@ -55,10 +57,10 @@ input[type=text]:focus-visible,button:focus-visible{outline:3px solid var(--acce
 <body>
 <main>
   <section id="intro" class="card">
-    <h1>Find your stone</h1>
-    <p class="muted">Five quick questions for our friendship renewal. Go with your gut. The stones will know, and your answers choose the bracelet you take home.</p>
+    <h1>Friendship check-in</h1>
+    <p class="muted">Five quick questions to celebrate where you are in this new chapter. Go with your gut. There are no right or wrong answers.</p>
     <label for="nm">Your name</label>
-    <input id="nm" type="text" maxlength="40" autocomplete="off" placeholder="So we can match your bracelet">
+    <input id="nm" type="text" maxlength="40" autocomplete="off" placeholder="Just so we know it’s you">
     <button class="btn" id="go">Start</button>
   </section>
 
@@ -83,15 +85,15 @@ input[type=text]:focus-visible,button:focus-visible{outline:3px solid var(--acce
 </main>
 
 <script>
-const G={cit:["Citrine","#E8B431"],ave:["Green Aventurine","#3E9B6B"],pyr:["Pyrite","#A8924F"],
- tig:["Tiger’s Eye","#B8742A"],blk:["Black Obsidian","#3A3A48"],
- ros:["Rose Quartz","#F0A9C0"],ame:["Amethyst","#8B5CC6"]};
+const G={cit:["Citrine","#E8B431","The sunny “merchant’s stone.” Said to attract abundance, joy and good luck, and to bring a little warmth to every day."],ave:["Green Aventurine","#3E9B6B","Often called the stone of opportunity. Believed to bring luck, fresh starts and gentle, steady growth."],pyr:["Pyrite","#A8924F","Known as fool’s gold. Said to bring confidence, protection and prosperity, and to give your goals a golden push."],
+ tig:["Tiger’s Eye","#B8742A","A stone of courage and focus. Believed to bring confidence, steady determination and clear decisions."],blk:["Black Obsidian","#3A3A48","A powerful grounding stone. Said to shield you from negativity, clear away what holds you back and help you see things clearly."],
+ ros:["Rose Quartz","#F0A9C0","The stone of unconditional love. Believed to open the heart and bring self-love, warm friendships and harmony."],ame:["Amethyst","#8B5CC6","The calming stone. Said to quiet an overactive mind, ease stress and bring balance, peace and restful sleep."]};
 const Q=[
  {q:"What are you hoping this new chapter brings?",a:{A:"Financial growth and abundance",B:"A big career breakthrough",C:"Deeper, warmer connections",D:"Peace of mind and calm"}},
- {q:"Which sparkly thing calls to you?",a:{A:"A golden, glowing stone",B:"A deep, bold stone that looks powerful",C:"A soft pink stone",D:"A cool purple or blue stone"}},
+ {q:"Which vibe do you want for the year ahead?",a:{A:"Golden and glowing",B:"Deep and bold",C:"Soft and rosy",D:"Cool and calm"}},
  {q:"Your ideal weekend looks like…",a:{A:"Planning side hustles or shopping smart",B:"Working on goals or learning a new skill",C:"Quality time with loved ones",D:"Sleeping in, a spa day, or doing nothing"}},
  {q:"What drains you the most lately?",a:{A:"Bills and money worries",B:"Work pressure and uncertainty",C:"Heartaches or lonely moments",D:"Overthinking and burnout"}},
- {q:"Which phrase would you put on your bracelet?",a:{A:"“Abundance flows to me.”",B:"“I am built for success.”",C:"“I am loved and I give love.”",D:"“I choose peace.”"}}
+ {q:"Which phrase do you need to hear this year?",a:{A:"“Abundance flows to me.”",B:"“I am built for success.”",C:"“I am loved and I give love.”",D:"“I choose peace.”"}}
 ];
 const R={
  A:{n:"Money",g:["cit","pyr"],m:"Abundance, luck, and prosperity.",p:"Abundance flows to me."},
@@ -135,13 +137,13 @@ function finish(){
   const key=Object.keys(c).filter(L=>c[L]===top).sort().join("");
   const r=R[key]||R[key.slice(0,2)];
   const name=$("nm").value.trim();
-  $("who").textContent=name?"For "+name:"";
-  const CODE={A:"MQ-318",B:"LX-742",C:"TD-905",D:"VK-263",AB:"NF-581",BC:"ZP-136",AC:"HW-479",AD:"CB-824",BD:"JS-657",CD:"YE-092"};
-  $("rt").textContent="Your stone is sealed";
-  $("rm").textContent="Your bracelet stays a surprise until the event. Your secret code:";
-  $("ph").textContent=CODE[key]||CODE[key.slice(0,2)];
+  $("who").textContent=name?name+", the result is…":"The result is…";
+  $("rt").textContent="You need "+r.g.map(k=>G[k][0]).join(" and ")+"!";
+  $("rm").textContent=r.m;
+  $("ph").textContent="“"+r.p+"”";
   $("gems").innerHTML="";
-  bracelet(Object.keys(G));show("res");
+  r.g.forEach(k=>{const li=document.createElement("li"),d=document.createElement("b"),t=document.createElement("div"),n=document.createElement("strong"),s=document.createElement("span");d.style.background=G[k][1];n.textContent=G[k][0];s.textContent=G[k][2];t.append(n,s);li.append(d,t);$("gems").appendChild(li)});
+  $("art").innerHTML='<svg viewBox="0 0 120 120" style="width:5rem" role="img" aria-label="Sparkle"><path d="M60 8 L72 48 L112 60 L72 72 L60 112 L48 72 L8 60 L48 48 Z" fill="var(--accent)"/></svg>';show("res");
 }
 function bracelet(keys){
   const n=14,cx=110,cy=110,R0=78;let s='<svg viewBox="0 0 220 220" role="img" aria-label="Bracelet made of '+keys.map(k=>G[k][0]).join(", ")+'"><circle cx="110" cy="110" r="78" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2"/>';
