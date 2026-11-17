@@ -77,7 +77,7 @@ input[type=text]:focus-visible,button:focus-visible{outline:3px solid var(--acce
     <p id="rm"></p>
     <p class="phrase" id="ph"></p>
     <p class="muted">Renewed friendship, renewed energy ✨</p>
-    <p class="muted" style="font-size:.9rem">Take a screenshot of your result and send it to our group chat.</p>
+    <p class="muted" style="font-size:.9rem">Screenshot this and send it to our GC.</p>
     <button class="btn ghost" id="again">Start over</button>
   </section>
 </main>
@@ -94,7 +94,7 @@ const Q=[
  {q:"Which phrase would you put on your bracelet?",a:{A:"“Abundance flows to me.”",B:"“I am built for success.”",C:"“I am loved and I give love.”",D:"“I choose peace.”"}}
 ];
 const R={
- A:{n:"Money",g:["cit","ave","pyr"],m:"Abundance, luck, and prosperity.",p:"Abundance flows to me."},
+ A:{n:"Money",g:["cit","pyr"],m:"Abundance, luck, and prosperity.",p:"Abundance flows to me."},
  B:{n:"Career",g:["tig","blk"],m:"Confidence, focus, and drive.",p:"I am built for success."},
  C:{n:"Love",g:["ros"],m:"Self-love, harmony, and connection.",p:"I am loved and I give love."},
  D:{n:"Stress",g:["ame"],m:"Calm, balance, and release.",p:"I choose peace."},
@@ -136,12 +136,12 @@ function finish(){
   const r=R[key]||R[key.slice(0,2)];
   const name=$("nm").value.trim();
   $("who").textContent=name?"For "+name:"";
-  $("rt").textContent=r.n+" bracelet";
-  $("rm").textContent=r.m;
-  $("ph").textContent="“"+r.p+"”";
+  const CODE={A:"MQ-318",B:"LX-742",C:"TD-905",D:"VK-263",AB:"NF-581",BC:"ZP-136",AC:"HW-479",AD:"CB-824",BD:"JS-657",CD:"YE-092"};
+  $("rt").textContent="Your stone is sealed";
+  $("rm").textContent="Your bracelet stays a surprise until the event. Your secret code:";
+  $("ph").textContent=CODE[key]||CODE[key.slice(0,2)];
   $("gems").innerHTML="";
-  r.g.forEach(k=>{const li=document.createElement("li");const d=document.createElement("b");d.style.background=G[k][1];li.append(d,G[k][0]);$("gems").appendChild(li)});
-  bracelet(r.g);show("res");
+  bracelet(Object.keys(G));show("res");
 }
 function bracelet(keys){
   const n=14,cx=110,cy=110,R0=78;let s='<svg viewBox="0 0 220 220" role="img" aria-label="Bracelet made of '+keys.map(k=>G[k][0]).join(", ")+'"><circle cx="110" cy="110" r="78" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2"/>';
